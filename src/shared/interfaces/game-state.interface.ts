@@ -6,6 +6,7 @@ export interface GameState {
     player2: player;
 
     shotgunAmmos: boolean[];
+    actualTurnPlayer: string;
 }
 
 interface player {

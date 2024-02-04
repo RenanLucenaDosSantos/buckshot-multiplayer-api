@@ -6,7 +6,7 @@ import { Server } from "socket.io";
 
 @Injectable()
 export class GameStateService {
-    gameState: GameState = new defaultGameState()
+    public gameState: GameState = new defaultGameState()
     
     // constructor(
     //   private readonly LobbyGateway: LobbyGateway
@@ -22,12 +22,11 @@ export class GameStateService {
       server.emit('gameStarted', dto)
     }
 
-    endGame(server: Server) {
+    endGame() {
       this.gameState.running = false
+      this.gameState.player1.inRoom = false
+      this.gameState.player2.inRoom = false
       this.gameState.shotgunAmmos = []
-
-      const dto = this.gameState
-      server.emit('gameEnded', dto)
     }
 
     generateShotgunAmmos(): boolean[] {
@@ -48,6 +47,15 @@ export class GameStateService {
       }
     
       return shotgunAmmos;
+    }
+
+    reloadAmmo(server: Server) {
+      this.gameState.shotgunAmmos = this.generateShotgunAmmos()
+      server.emit('reloadShotgun', this.gameState.shotgunAmmos)
+    }
+
+    whoIsInTurn(): string {
+      return this.gameState.actualTurnPlayer
     }
 
     connectPlayer(playerNumber: number, id: string) {
@@ -98,7 +106,7 @@ export class GameStateService {
       this.gameState[dto.player].inRoom = false;
 
       if(this.gameState.running) {
-        this.endGame(server)
+        this.endGame()
       }
     }
 
