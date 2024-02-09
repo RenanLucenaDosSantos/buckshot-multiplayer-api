@@ -21,7 +21,7 @@ export class GameStateService {
       const dto = this.gameState
       server.emit('gameStarted', dto)
     }
-
+ 
     endGame() {
       this.gameState.running = false
       this.gameState.player1.inRoom = false

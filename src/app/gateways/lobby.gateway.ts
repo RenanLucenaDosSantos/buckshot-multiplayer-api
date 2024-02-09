@@ -1,7 +1,6 @@
 import { Injectable, OnModuleInit } from "@nestjs/common";
-import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
+import { WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server } from "socket.io";
-import { enterRoomDto } from "src/shared/dto/enter-room.dto";
 import { GameStateService } from "src/shared/services/game-state/game-state.service";
 
 @Injectable()
@@ -39,6 +38,10 @@ export class LobbyGateway implements OnModuleInit {
                     this.server.emit('oponentLeavedServer')
                     this.GameStateService.gameState.canEnter = false
                     this.server.emit('canEnter', { canEnter: false })
+                }
+                
+                if(this.connectedUsers === 0) {
+                    this.GameStateService.resetGameData();
                 }
             });
         })
